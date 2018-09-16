@@ -1,0 +1,51 @@
+### Autor
+Dimos Alexandros 332CC
+
+### SO Assignment 2
+Să se implementeze un shell simplu, care suportă execuția de comenzi externe cu argumente multiple,
+comenzi interne, redirectări, pipe-uri. Shell-ul trebuie să suporte execuția de comenzi compuse,
+cu oricâți operatori.
+
+Shell-ul suporta urmatorii operatori:
+
+- secventiere `;`
+- paralelism `&`
+- pipe `|`
+- executie conditionata `||` `&&`
+- redirectari `>` `<` `2>` `>>` etc
+
+Comenzi built-in:
+- cd
+- exit
+- quit
+
+Este suportata de asemenea asignarea de variabile (ex: `NULL=/dev/null`)
+
+### Implementare
+Implementarea facuta doar in fisierul utils-lin.c
+
+- secventiere:
+  - se executa primul copil apoi cel de-al doilea
+  - se intoarce valoarea celui de-al doilea copil
+
+- executie conditionata:
+  - || se executa primul copil; daca valoarea cu care a iesit este diferita de 0 atunci se executa al doilea copil
+  - && se executa primul copil; daca valoarea cu care a iesit este 0 atunci se executa al doilea copil
+  - se intoarce valoare ultimului copil executat
+
+- paralel:
+  - ambii copii sunt porniti in acelasi timp si se astepta apoi amandoi
+  - se intoarce valoarea celui de-al doilea copil
+
+- pipe:
+  - definita structura pipe_data la inceputul sursei
+  - se creeaza un pipe si doua structuri pipe_data
+  - pipe-ul se assigneaza in pipe_data.pipefd1 pentru copilul care scrie iar pe pipe_data.pipefd0 pentru cel care citeste
+  - pointeri catre structuri sunt asignati comenzilor in pointerii aux
+  - apoi copii sunt executati in paralel
+  - este in regula sa se foloseasca pointeri catre pipefd alocati pe stiva deoarece stack frame-urile
+    ce urmeaza vor fi dupa cel curent; cand stack frame-ul curent nu mai exista, nici pointerii nu mai sunt folositi
+  - redirectarea in pipe se face inainte de execve folosind functia do_redirect_pipe()
+  - parintele inchide pipe-ul apeland functia do_close_pipe()
+  - desi copii ruleaza in paralel, cel de-al doilea nu poate rula fara input de la primul
+  - se intoarce valoarea celui de-al doilea copil

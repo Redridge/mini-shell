@@ -1,0 +1,19 @@
+.PHONY: all clean run pack build-pre build-post
+
+all: build-pre run build-post
+
+build-pre:
+	cd ../src/; make -f ../src/Makefile; cp mini-shell ../tema2-checker-lin; make clean
+
+build-post:
+	rm mini-shell
+
+run:
+	@./run_all.sh
+
+pack:
+	zip -r run_test_lin.zip _test/ Makefile.checker \
+		run_all.sh README
+
+clean:
+	-rm -f *~

@@ -1,0 +1,1 @@
+/home/red/facultate/so/so-assignment-2/tema2-checker-lin/_test/outputs/test_05_out/_x_y_z_/_a_b_c_
